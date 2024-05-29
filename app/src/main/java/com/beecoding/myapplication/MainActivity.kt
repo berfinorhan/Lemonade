@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,11 +43,31 @@ class MainActivity : ComponentActivity() {
         setContent {
             LemonadeTheme {
                 Surface {
+                    LemonadeAppBar()
                     LemonadeApp()
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LemonadeAppBar() {
+    CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(247, 223, 85),
+            titleContentColor = Color.Black,
+        ),
+        title = {
+            Text(
+                text = stringResource(R.string.lemonade),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold
+            )
+        },
+    )
 }
 
 @Composable
@@ -68,11 +93,17 @@ fun LemonadeApp(modifier: Modifier = Modifier) {
             }
 
             2 -> {
+                var taps = (2..4).random()
                 LemonadeButton(
                     imageResource = R.drawable.lemon_squeeze,
                     textResource = R.string.keep_tapping_the_lemon_to_squeeze_it,
                     contentDesc = R.string.lemon,
-                    callback = { currentStep = 3 }
+                    callback = {
+                        taps--
+                        if (taps == 0) {
+                            currentStep = 3
+                        }
+                    }
                 )
             }
 
@@ -138,6 +169,7 @@ fun LemonadeButton(
 @Composable
 fun GreetingPreview() {
     LemonadeTheme {
+        LemonadeAppBar()
         LemonadeApp()
     }
 }
